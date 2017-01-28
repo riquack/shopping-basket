@@ -2,17 +2,21 @@ package ro.riquack.shoppingbasket.api.controllers
 
 import javax.inject._
 
+import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
-import ro.riquack.shoppingbasket.models.CatalogGenerator
+import ro.riquack.shoppingbasket.services.BasketService
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 
 @Singleton
-class BasketController @Inject extends Controller {
+class BasketController @Inject() (basketService: BasketService)(implicit ec: ExecutionContext) extends Controller {
 
   def list = Action.async {
-    Future.successful(Ok("Your list of items in the basket."))
+
+    import ro.riquack.shoppingbasket.models.Item.lightWrites
+    basketService.list.map(items => Ok(Json.toJson(items)))
+
   }
 
   def add = Action.async {

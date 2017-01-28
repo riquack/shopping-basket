@@ -1,7 +1,7 @@
 # Shopping Basket API endpoints
 
-GET         /items                                      ro.riquack.shoppingbasket.api.controllers.CatalogController.list
-GET         /items/:id                                  ro.riquack.shoppingbasket.api.controllers.CatalogController.find(id: String)
+GET         /items                                      ro.riquack.shoppingbasket.api.controllers.StoreController.list
+GET         /items/:id                                  ro.riquack.shoppingbasket.api.controllers.StoreController.find(id: String)
 
 GET         /basket/items                               ro.riquack.shoppingbasket.api.controllers.BasketController.list
 POST        /basket/items                               ro.riquack.shoppingbasket.api.controllers.BasketController.add

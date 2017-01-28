@@ -4,8 +4,8 @@ sealed trait BasketMessage {
 
 }
 
-case object ListProductsMessage extends BasketMessage
+case object ListProducts extends BasketMessage
 
-case class AddProductMessage() extends BasketMessage
+case class AddProduct(id: String) extends BasketMessage
 
-case class RemoveProductMessage() extends BasketMessage
+case class RemoveProduct() extends BasketMessage
