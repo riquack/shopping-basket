@@ -1,27 +1,31 @@
 package ro.riquack.shoppingbasket.actors
 
-import akka.actor.{Actor, ActorRef}
-import akka.event.Logging
-import ro.riquack.shoppingbasket.messages.{AddProduct, ListProducts}
-import ro.riquack.shoppingbasket.models.Item
+import akka.actor.{Actor, ActorLogging}
+import ro.riquack.shoppingbasket.messages.BasketMessage._
+import ro.riquack.shoppingbasket.models.{Basket, BasketItem}
 
-class BasketActor(storeActor: ActorRef) extends Actor {
 
-  private val log = Logging(context.system, this)
+class BasketActor() extends Actor with ActorLogging {
 
-  private val items: List[Item] = List.empty
+  private val basket = Basket(List.empty[BasketItem])
 
   override def preStart(): Unit = log.info("Starting...")
 
   override def receive: Receive = {
-    case ListProducts => {
+
+    case ListProducts =>
       log.info("Sending list of items in the basket...")
-      sender() ! items
-    }
-    case AddProduct(id) => {
-      log.info(s"Adding $id to basket...")
-      ???
-    }
+      sender() ! basket
+
+    case AddProduct(item, amount) =>
+      log.info(s"Adding $amount x $item to basket...")
+      basket.add(item, amount)
+      sender() ! basket
+
+    case RemoveProduct(item) =>
+      log.info(s"Removing $item from basket...")
+      basket.remove(item)
+      sender() ! basket
   }
 
 }

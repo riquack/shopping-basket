@@ -1,16 +1,28 @@
 package ro.riquack.shoppingbasket.messages
 
-sealed trait StoreMessage {
+import ro.riquack.shoppingbasket.api.dto.ItemDTO
+import ro.riquack.shoppingbasket.models.Item
+
+object StoreMessage {
+
+  case class IncrementProductStock()
+
+  case class DecrementProductStock(itemDTO: ItemDTO)
+
+  case object RetrieveAllProducts
+
+  case class RetrieveProduct(id: String)
 
 }
 
+sealed trait StoreStockMessage
 
-case class IncrementProductStock() extends StoreMessage
+case class ItemInStock(item: Item) extends StoreStockMessage
 
-case class DecrementProductStock() extends StoreMessage
+case object ItemNotFound extends StoreStockMessage
 
-case object RetrieveAllProducts extends StoreMessage
+case object ItemNoStock extends StoreStockMessage
 
-case class RetrieveProduct(id: String) extends StoreMessage
+
 
 

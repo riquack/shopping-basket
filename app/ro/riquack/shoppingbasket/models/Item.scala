@@ -20,6 +20,8 @@ case class Item(
 
 object Item {
 
+  implicit val writes: Writes[Item] = Json.writes[Item]
+
   implicit val lightWrites: Writes[Item] =
     (
       (__ \ 'id).write[String] and
@@ -37,6 +39,14 @@ object Item {
       item.stock > 0
     ))
 
-  implicit val writes = Json.writes[Item]
-
+  implicit val basketWrites: Writes[Item] =
+    (
+      (__ \ 'id).write[String] and
+        (__ \ 'name).write[String] and
+        (__ \ 'price).write[BigDecimal]
+      )(item => (
+      item.id,
+      s"${item.name} by ${item.vendor}",
+      item.price
+    ))
 }

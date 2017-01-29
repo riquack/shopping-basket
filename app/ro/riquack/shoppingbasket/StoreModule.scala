@@ -6,7 +6,9 @@ import play.api.inject._
 import ro.riquack.shoppingbasket.actors.ActorFactory
 import ro.riquack.shoppingbasket.services.{BasketService, StoreService}
 
-
+/**
+  * https://www.playframework.com/documentation/2.5.x/ScalaDependencyInjection#Play-libraries
+ */
 class StoreModule extends Module {
 
   private val actorSystem = ActorSystem(ActorFactory.systemName)

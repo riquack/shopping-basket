@@ -4,7 +4,7 @@ import javax.inject.{Inject, Named}
 
 import akka.actor.ActorRef
 import akka.pattern.ask
-import ro.riquack.shoppingbasket.messages.{RetrieveAllProducts, RetrieveProduct}
+import ro.riquack.shoppingbasket.messages.StoreMessage._
 import ro.riquack.shoppingbasket.models.Item
 
 import scala.concurrent.{ExecutionContext, Future}

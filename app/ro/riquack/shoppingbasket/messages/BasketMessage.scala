@@ -1,11 +1,12 @@
 package ro.riquack.shoppingbasket.messages
 
-sealed trait BasketMessage {
+import ro.riquack.shoppingbasket.models.Item
 
+object BasketMessage {
+
+  case object ListProducts
+
+  case class AddProduct(item: Item, amount: Int)
+
+  case class RemoveProduct(item: Item)
 }
-
-case object ListProducts extends BasketMessage
-
-case class AddProduct(id: String) extends BasketMessage
-
-case class RemoveProduct() extends BasketMessage
