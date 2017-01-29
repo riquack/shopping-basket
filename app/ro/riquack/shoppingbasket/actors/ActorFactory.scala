@@ -21,7 +21,7 @@ class ActorFactory @Inject()(actorSystem: ActorSystem) {
 
 object ActorFactory {
 
-  implicit val defaultTimeout = Timeout(2.seconds)
+  implicit val askTimeout = Timeout(2.seconds)
 
   val systemName = "shopping-store"
 

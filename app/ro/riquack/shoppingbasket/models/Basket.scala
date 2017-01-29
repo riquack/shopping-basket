@@ -4,21 +4,22 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.libs.json.Writes._
 
-case class Basket(var items: List[BasketItem]){
+case class Basket(private var items: List[BasketItem]){
 
   def value = items.foldRight(BigDecimal(0))((cur, acc) => cur.item.price * cur.amount + acc)
 
   def add(item: Item, amount: Int): Unit = {
-    items.find(_.item.id == item.id) match {
-      case Some(_) => items.map {
-        case x if x.item == item => x.copy(amount = x.amount + amount)
-        case x => x
-      }
+    find(item.id) match {
+      case Some(basketItem) =>
+        remove(basketItem)
+        items = items :+ basketItem.copy(amount = basketItem.amount + amount)
       case None => items = items :+ BasketItem(item, amount)
     }
   }
 
-  def remove(item: Item): Unit = ???
+  def remove(basketItem: BasketItem): Unit = items = items.filterNot(_.item.id == basketItem.item.id)
+
+  def find(id: String): Option[BasketItem] = items.find(_.item.id == id)
 }
 
 

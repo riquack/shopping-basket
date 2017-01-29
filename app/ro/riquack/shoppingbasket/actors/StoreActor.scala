@@ -1,37 +1,33 @@
 package ro.riquack.shoppingbasket.actors
 
-import akka.actor.Actor
+import akka.actor.{Actor, ActorLogging}
 import akka.event.Logging
-import ro.riquack.shoppingbasket.messages.{ItemInStock, ItemNoStock, ItemNotFound}
 import ro.riquack.shoppingbasket.messages.StoreMessage._
-import ro.riquack.shoppingbasket.models.Item
+import ro.riquack.shoppingbasket.models.{BasketItem, Item, Store}
 import ro.riquack.shoppingbasket.repository.StoreRepository
 
-class StoreActor(storeRepository: StoreRepository) extends Actor {
+class StoreActor(storeRepository: StoreRepository) extends Actor with ActorLogging {
 
-  private val log = Logging(context.system, this)
-
-  private var list: List[Item] = storeRepository.all
+  private val store: Store = Store(storeRepository.all)
 
   override def preStart(): Unit = log.info("Starting...")
 
   override def receive: Receive = {
     case RetrieveAllProducts =>
-      log.info("Sending list of items in the store...")
-      sender() ! list
+      sender() ! store
+      log.info("Listed all items in the store...")
 
     case RetrieveProduct(id) =>
-      log.info(s"Searching item $id...")
-      sender() ! list.find(_.id == id)
+      sender() ! store.find(id)
+      log.info(s"Retrieved item $id...")
 
     case DecrementProductStock(item) =>
-      log.info(s"Taking ${item.amount} x ${item.id} from stock...")
 
-      val stockStatus = list.find(item => item.id == item.id) match {
+      val stockStatus = store.find(item.id) match {
         case Some(prd) => {
           if (prd.stock >= item.amount) {
-            list = list.map(x => if (x == prd) x.copy(stock = x.stock - item.amount) else x)
-          ItemInStock(prd)
+            store.removeStock(item)
+            ItemInStock(prd)
           } else {
             ItemNoStock
           }
@@ -39,6 +35,11 @@ class StoreActor(storeRepository: StoreRepository) extends Actor {
         case None => ItemNotFound
       }
       sender() ! stockStatus
+      log.info(s"Took ${item.amount} x ${item.id} from stock...")
+
+    case IncrementProductStock(basketItem) =>
+      store.addStock(basketItem)
+      log.info(s"Added ${basketItem.amount} x ${basketItem.item.id} in stock...")
 
   }
 }

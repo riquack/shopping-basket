@@ -14,18 +14,23 @@ class BasketActor() extends Actor with ActorLogging {
   override def receive: Receive = {
 
     case ListProducts =>
-      log.info("Sending list of items in the basket...")
       sender() ! basket
+      log.info("Retrieved items in the basket...")
 
     case AddProduct(item, amount) =>
-      log.info(s"Adding $amount x $item to basket...")
       basket.add(item, amount)
       sender() ! basket
+      log.info(s"Added $amount x ${item.id} to basket...")
 
-    case RemoveProduct(item) =>
-      log.info(s"Removing $item from basket...")
-      basket.remove(item)
-      sender() ! basket
+    case RemoveProduct(id) =>
+      basket.find(id) match {
+        case Some(basketItem) =>
+          basket.remove(basketItem)
+          sender() ! ItemRemoved(basketItem)
+        case None =>
+          sender() ! ItemNotFound
+      }
+      log.info(s"Removed $id from basket...")
   }
 
 }
