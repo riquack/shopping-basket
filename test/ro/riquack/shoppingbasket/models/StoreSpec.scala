@@ -6,7 +6,7 @@ import ro.riquack.shoppingbasket.api.dto.ItemDTO
 
 class StoreSpec extends FlatSpec with TestValues with OptionValues {
 
-  val store = Store(List(bike, phone, notebook))
+  private val store = defaultStore
 
   "A store" should "find a existing item" in {
     assert(store.find("ae4cd").value == phone)

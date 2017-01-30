@@ -29,7 +29,6 @@ class BasketController @Inject() (basketService: BasketService)(implicit ec: Exe
           case Left(MissingItemError) => NotFound
           case Left(InsufficientStockError) => BadRequest
           case Right(_) => Created.withHeaders(LOCATION -> routes.BasketController.list().url)
-
         }
     )
   }
