@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorLogging}
 import akka.event.Logging
 import ro.riquack.shoppingbasket.messages.StoreMessage._
 import ro.riquack.shoppingbasket.models.{BasketItem, Item, Store}
-import ro.riquack.shoppingbasket.repository.StoreRepository
+import ro.riquack.shoppingbasket.repositories.StoreRepository
 
 class StoreActor(storeRepository: StoreRepository) extends Actor with ActorLogging {
 

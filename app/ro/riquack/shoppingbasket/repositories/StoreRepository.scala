@@ -1,4 +1,4 @@
-package ro.riquack.shoppingbasket.repository
+package ro.riquack.shoppingbasket.repositories
 
 import java.util.UUID
 

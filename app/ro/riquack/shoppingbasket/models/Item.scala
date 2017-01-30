@@ -4,6 +4,8 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.libs.json.Writes._
 
+import scala.math.BigDecimal.RoundingMode
+
 case class Item(
     id: String,
     name: String,
@@ -14,8 +16,10 @@ case class Item(
     reviews: List[Review],
     stock: Int) {
 
-  def rating: Long = if (reviews.nonEmpty) reviews.foldRight(0)(_.rating + _) / reviews.size else 0
-
+  def rating: Double = {
+    val rating = if (reviews.nonEmpty) reviews.map(_.rating).sum.toDouble / reviews.size else 0D
+    BigDecimal(rating).setScale(2, RoundingMode.HALF_EVEN).doubleValue()
+  }
 }
 
 object Item {
@@ -28,7 +32,7 @@ object Item {
         (__ \ 'name).write[String] and
         (__ \ 'description).write[String] and
         (__ \ 'price).write[BigDecimal] and
-        (__ \ 'rating).write[Long] and
+        (__ \ 'rating).write[Double] and
         (__ \ 'inStock).write[Boolean]
       )(item => (
       item.id,

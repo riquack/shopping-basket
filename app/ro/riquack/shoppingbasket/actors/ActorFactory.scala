@@ -7,7 +7,7 @@ import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.util.Timeout
 
 import scala.concurrent.duration._
-import ro.riquack.shoppingbasket.repository.StoreRepository
+import ro.riquack.shoppingbasket.repositories.StoreRepository
 
 class ActorFactory @Inject()(actorSystem: ActorSystem) {
 
