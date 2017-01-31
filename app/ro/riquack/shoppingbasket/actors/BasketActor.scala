@@ -27,10 +27,11 @@ class BasketActor() extends Actor with ActorLogging {
         case Some(basketItem) =>
           basket.remove(basketItem)
           sender() ! ItemRemoved(basketItem)
+          log.info(s"Removed $id from basket...")
         case None =>
           sender() ! ItemNotFound
+          log.info(s"Missing $id from basket...")
       }
-      log.info(s"Removed $id from basket...")
   }
 
 }
