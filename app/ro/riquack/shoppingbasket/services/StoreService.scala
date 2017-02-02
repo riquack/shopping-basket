@@ -8,7 +8,6 @@ import ro.riquack.shoppingbasket.actors.messages.StoreMessage._
 
 import scala.concurrent.{ExecutionContext, Future}
 import ro.riquack.shoppingbasket.actors.ActorFactory.askTimeout
-import ro.riquack.shoppingbasket.actors.messages.StoreOutboundMessage
 import ro.riquack.shoppingbasket.services.responses.{StoreServiceError, StoreServiceResponse}
 import ro.riquack.shoppingbasket.services.responses.StoreServiceError._
 import ro.riquack.shoppingbasket.services.responses.StoreServiceResponse._
@@ -17,16 +16,15 @@ import ro.riquack.shoppingbasket.services.responses.StoreServiceResponse._
 
 class StoreService @Inject() (@Named("storeActor") storeActor: ActorRef)(implicit ec: ExecutionContext) {
 
-  def all: Future[Either[StoreServiceError, StoreServiceResponse]] =
-    (storeActor ? RetrieveAllProducts).map {
-      case ShowContent(store) => Right(RetrieveSuccess(store))
+  def list: Future[Either[StoreServiceError, StoreServiceResponse]] =
+    (storeActor ? ListItems).map {
+      case RevealedContent(store) => Right(RetrieveSuccess(store))
       case _ => Left(UnexpectedMessageError)
   }
 
-  //TODO retrieve instead of find
-  def find(id: String): Future[Either[StoreServiceError, StoreServiceResponse]] =
-    (storeActor ? RetrieveProduct(id)).map {
-      case Show(storeItem) => Right(FindSuccess(storeItem))
+  def retrieve(id: String): Future[Either[StoreServiceError, StoreServiceResponse]] =
+    (storeActor ? RetrieveItem(id)).map {
+      case Revealed(storeItem) => Right(FindSuccess(storeItem))
       case ItemNotFound => Left(MissingItemError)
       case _ => Left(UnexpectedMessageError)
     }

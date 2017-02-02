@@ -14,7 +14,7 @@ trait BasketOutboundMessage
 
 object BasketMessage {
 
-  case object RetrieveProducts extends BasketInboundMessage
+  case object ListProducts extends BasketInboundMessage
 
   case class AddProduct(item: Item, amount: Int) extends BasketInboundMessage
 
@@ -22,13 +22,13 @@ object BasketMessage {
 
 
 
-  case class Show(basketItem: BasketItem) extends BasketOutboundMessage
+  case class Revealed(basketItem: BasketItem) extends BasketOutboundMessage
+
+  case class RevealedContent(basket: Basket) extends BasketOutboundMessage
 
   case object ItemAdded extends BasketOutboundMessage
 
   case object ItemNotFound extends BasketOutboundMessage
-
-  case class ShowContent(basket: Basket) extends BasketOutboundMessage
 }
 
 

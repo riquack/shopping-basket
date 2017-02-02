@@ -3,7 +3,6 @@ package ro.riquack.shoppingbasket.models
 import play.api.libs.json.{Json, Writes}
 import ro.riquack.shoppingbasket.api.dto.ItemDTO
 
-//TODO same as in Basket
 case class Store(private var items: List[StoreItem]) {
 
   def removeStock(itemDTO: ItemDTO): Unit = {
@@ -13,7 +12,7 @@ case class Store(private var items: List[StoreItem]) {
   def addStock(basketItem: BasketItem): Unit =
     items = items.map(storeItem => if (storeItem.item.id == basketItem.item.id) storeItem.copy(stock = storeItem.stock + basketItem.amount) else storeItem)
 
-  def find(id: String): Option[StoreItem] = items.find(_.item.id == id)
+  def retrieve(id: String): Option[StoreItem] = items.find(_.item.id == id)
 
 }
 object Store {

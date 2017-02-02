@@ -26,9 +26,9 @@ class BasketActorSpec extends TestKit(ActorSystem("test-store"))
 
     "send back the items in the basket" in {
       val basketActorRef = TestActorRef[BasketActor]
-      val result =  (basketActorRef ? RetrieveProducts).futureValue
+      val result =  (basketActorRef ? ListProducts).futureValue
 
-      result mustEqual ShowContent(Basket(List.empty))
+      result mustEqual RevealedContent(Basket(List.empty))
     }
 
     "add an item to the basket" in {
@@ -44,7 +44,7 @@ class BasketActorSpec extends TestKit(ActorSystem("test-store"))
       basketActorRef ! AddProduct(phone, 2)
       val result = (basketActorRef ? RemoveProduct("ae4cd")).futureValue
 
-      result mustEqual Show(basketPhone)
+      result mustEqual Revealed(basketPhone)
     }
 
     "inform that an item is not in the basket thus can't be removed" in {

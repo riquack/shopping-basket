@@ -13,31 +13,31 @@ class StoreActor(storeRepository: StoreRepository) extends Actor with ActorLoggi
   override def preStart(): Unit = log.info("Starting...")
 
   override def receive: Receive = {
-    case RetrieveAllProducts =>
-      sender() ! ShowContent(store)
+    case ListItems =>
+      sender() ! RevealedContent(store)
       log.info("Listed all items in the store")
 
-    case RetrieveProduct(id) =>
-      store.find(id) match {
+    case RetrieveItem(id) =>
+      store.retrieve(id) match {
         case Some(storeItem) =>
-          sender() ! Show(storeItem)
+          sender() ! Revealed(storeItem)
           log.info(s"Retrieved item $id")
         case None =>
           sender() ! ItemNotFound
           log.error(s"Could not find $id")
       }
 
-    case DecrementProductStock(reqItem) =>
+    case DecrementStock(reqItem) =>
 
-      val outboundMessage = store.find(reqItem.id) match {
+      val outboundMessage = store.retrieve(reqItem.id) match {
         case Some(storeItem) => {
           if (storeItem.stock >= reqItem.amount) {
             store.removeStock(reqItem)
             log.info(s"Took ${reqItem.amount} x ${reqItem.id} from stock")
-            Show(storeItem)
+            Revealed(storeItem)
           } else {
             log.info(s"Could not find ${reqItem.amount} x ${reqItem.id} in stock")
-            ItemNoStock
+            ItemInsufficientStock
           }
         }
         case None =>
@@ -46,7 +46,7 @@ class StoreActor(storeRepository: StoreRepository) extends Actor with ActorLoggi
       }
       sender() ! outboundMessage
 
-    case IncrementProductStock(basketItem) =>
+    case IncrementStock(basketItem) =>
       store.addStock(basketItem)
       log.info(s"Added ${basketItem.amount} x ${basketItem.item.id} in stock...")
 

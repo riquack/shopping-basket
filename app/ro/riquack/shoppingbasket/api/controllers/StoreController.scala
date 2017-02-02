@@ -17,18 +17,17 @@ class StoreController @Inject () (storeService: StoreService)(implicit ec: Execu
     import ro.riquack.shoppingbasket.models.Store.writes
     import ErrorDTO.writes
 
-    storeService.all.map {
+    storeService.list.map {
       case Right(RetrieveSuccess(items)) => Ok(Json.toJson(items))
       case Left(UnexpectedMessageError) => InternalServerError(Json.toJson(ErrorDTO("An unexpected error occurred")))
     }
 
   }
 
-  //TODO rename find to retrieve
-  def find(id: String) = Action.async {
+  def retrieve(id: String) = Action.async {
     import ro.riquack.shoppingbasket.models.StoreItem.writes
 
-    storeService.find(id).map {
+    storeService.retrieve(id).map {
       case Right(FindSuccess(item)) => Ok(Json.toJson(item))
       case Left(MissingItemError) => NotFound(Json.toJson(ErrorDTO("Requested item was not found")))
       case Left(UnexpectedMessageError) => InternalServerError(Json.toJson(ErrorDTO("An unexpected error occurred")))

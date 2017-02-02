@@ -16,27 +16,27 @@ class BasketSpec extends FlatSpec with TestValues with OptionValues {
   }
 
   it should "find an exiting item" in {
-    assert(basket.find("ae4cd").value == basketPhone)
+    assert(basket.retrieve("ae4cd").value == basketPhone)
   }
 
   it should "not find a missing item" in {
-    assert(basket.find("3d4ea").isEmpty)
+    assert(basket.retrieve("3d4ea").isEmpty)
   }
 
   it should "contain a newly added item" in {
     basket.add(bike, 1)
-    assert(basket.find("bla32").value == basketBike)
+    assert(basket.retrieve("bla32").value == basketBike)
   }
 
   it should "update the amount for an existing item" in {
     basket.add(phone, 1)
-    assert(basket.find("ae4cd").value == BasketItem(phone, 3))
+    assert(basket.retrieve("ae4cd").value == BasketItem(phone, 3))
   }
 
   it should "not contain a previously removed item" in {
     basket.remove(basketNotebook)
-    assert(basket.find("ae4cd").isDefined)
-    assert(basket.find("zf33s").isEmpty)
+    assert(basket.retrieve("ae4cd").isDefined)
+    assert(basket.retrieve("zf33s").isEmpty)
   }
 
 }

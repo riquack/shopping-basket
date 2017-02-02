@@ -35,42 +35,42 @@ class StoreActorSpec extends TestKit(ActorSystem("test-system"))
 
     "list all products in the store" in {
       val actorActorRef = TestActorRef(new StoreActor(mockStoreRepository))
-      val result = (actorActorRef ? RetrieveAllProducts).futureValue
+      val result = (actorActorRef ? ListItems).futureValue
 
-      result mustEqual ShowContent(defaultStore)
+      result mustEqual RevealedContent(defaultStore)
     }
 
     "retrieve a products in the store" in {
       val actorActorRef = TestActorRef(new StoreActor(mockStoreRepository))
-      val result = (actorActorRef ? RetrieveProduct("ae4cd")).futureValue
+      val result = (actorActorRef ? RetrieveItem("ae4cd")).futureValue
 
-      result mustEqual Show(stockPhone)
+      result mustEqual Revealed(stockPhone)
     }
 
     "inform that the product is not in store" in {
       val actorActorRef = TestActorRef(new StoreActor(mockStoreRepository))
-      val result = (actorActorRef ? RetrieveProduct("zz3sd")).futureValue
+      val result = (actorActorRef ? RetrieveItem("zz3sd")).futureValue
 
       result mustEqual ItemNotFound
     }
 
     "remove item from stock if enough available" in {
       val actorActorRef = TestActorRef(new StoreActor(mockStoreRepository))
-      val result = (actorActorRef ? DecrementProductStock(ItemDTO("ae4cd", 1))).futureValue
+      val result = (actorActorRef ? DecrementStock(ItemDTO("ae4cd", 1))).futureValue
 
-      result mustEqual Show(stockPhone)
+      result mustEqual Revealed(stockPhone)
     }
 
     "inform that there isn't enough stock for the item" in {
       val actorActorRef = TestActorRef(new StoreActor(mockStoreRepository))
-      val result = (actorActorRef ? DecrementProductStock(ItemDTO("ae4cd", 20))).futureValue
+      val result = (actorActorRef ? DecrementStock(ItemDTO("ae4cd", 20))).futureValue
 
-      result mustEqual ItemNoStock
+      result mustEqual ItemInsufficientStock
     }
 
     "inform that there is no such item in store" in {
       val actorActorRef = TestActorRef(new StoreActor(mockStoreRepository))
-      val result = (actorActorRef ? DecrementProductStock(ItemDTO("zz3sd", 1))).futureValue
+      val result = (actorActorRef ? DecrementStock(ItemDTO("zz3sd", 1))).futureValue
 
       result mustEqual ItemNotFound
     }
@@ -78,7 +78,7 @@ class StoreActorSpec extends TestKit(ActorSystem("test-system"))
     "add removed item from basket back in stock" in {
       val actorActorRef = TestActorRef(new StoreActor(mockStoreRepository))
       within(100 millis) {
-        actorActorRef ! IncrementProductStock(BasketItem(phone, 1))
+        actorActorRef ! IncrementStock(BasketItem(phone, 1))
         expectNoMsg()
       }
     }

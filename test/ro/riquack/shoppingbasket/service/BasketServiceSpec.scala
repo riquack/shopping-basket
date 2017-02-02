@@ -8,7 +8,7 @@ import org.scalatest.mockito.MockitoSugar
 import ro.riquack.shoppingbasket.TestValues
 import ro.riquack.shoppingbasket.api.dto.ItemDTO
 import ro.riquack.shoppingbasket.actors.messages.BasketMessage
-import ro.riquack.shoppingbasket.actors.messages.BasketMessage.ShowContent
+import ro.riquack.shoppingbasket.actors.messages.BasketMessage.RevealedContent
 import ro.riquack.shoppingbasket.actors.messages.StoreMessage
 import ro.riquack.shoppingbasket.models.{Basket, BasketItem}
 import ro.riquack.shoppingbasket.services._
@@ -27,7 +27,7 @@ class BasketServiceSpec extends TestKit(ActorSystem("store-system"))
   "A BasketService" must {
     "return all the items in the basket" in {
       val basketActorRef = TestActorRef(new Actor {
-        override def receive: Receive = { case _ => sender() ! ShowContent(defaultBasket) }
+        override def receive: Receive = { case _ => sender() ! RevealedContent(defaultBasket) }
       })
       val storeActorRef = mock[ActorRef]
       val basketService = new BasketService(basketActorRef, storeActorRef)
@@ -41,7 +41,7 @@ class BasketServiceSpec extends TestKit(ActorSystem("store-system"))
         override def receive: Receive = { case _ => sender() ! defaultBasket }
       })
       val storeActorRef = TestActorRef(new Actor {
-        override def receive: Receive = { case _ => sender() ! StoreMessage.Show(stockPhone) }
+        override def receive: Receive = { case _ => sender() ! StoreMessage.Revealed(stockPhone) }
       })
       val basketService = new BasketService(basketActorRef, storeActorRef)
       val result = basketService.add(ItemDTO("ae4cd", 1))
@@ -52,7 +52,7 @@ class BasketServiceSpec extends TestKit(ActorSystem("store-system"))
     "inform that there is not enough stock" in {
       val basketActorRef = mock[ActorRef]
       val storeActorRef = TestActorRef(new Actor {
-        override def receive: Receive = { case _ => sender() !  StoreMessage.ItemNoStock}
+        override def receive: Receive = { case _ => sender() !  StoreMessage.ItemInsufficientStock}
       })
       val basketService = new BasketService(basketActorRef, storeActorRef)
       val result = basketService.add(ItemDTO("ae4cd", 1))
@@ -73,7 +73,7 @@ class BasketServiceSpec extends TestKit(ActorSystem("store-system"))
 
     "remove an exiting item from the basket" in {
       val basketActorRef = TestActorRef(new Actor {
-        override def receive: Receive = { case _ => sender() ! BasketMessage.Show(BasketItem(phone, 1)) }
+        override def receive: Receive = { case _ => sender() ! BasketMessage.Revealed(BasketItem(phone, 1)) }
       })
       val storeActorRef = TestActorRef(new Actor {
         override def receive: Receive = { case _ => Unit }

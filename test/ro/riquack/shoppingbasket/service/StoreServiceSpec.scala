@@ -24,24 +24,24 @@ class StoreServiceSpec extends TestKit(ActorSystem("store-system"))
   "A StoreService" must {
     "return all items in the store" in {
       val storeActorRef = TestActorRef(new Actor {
-        override def receive: Receive = { case _ => sender() ! ShowContent(defaultStore) }
+        override def receive: Receive = { case _ => sender() ! RevealedContent(defaultStore) }
       })
 
       val storeService = new StoreService(storeActorRef)
 
-      val result = storeService.all
+      val result = storeService.list
 
       result.futureValue mustEqual Right(RetrieveSuccess(Store(List(stockPhone, stockNotebook, stockBike))))
     }
 
     "return a requested item in the store" in {
       val storeActorRef = TestActorRef(new Actor {
-        override def receive: Receive = { case _ => sender() ! Show(stockPhone) }
+        override def receive: Receive = { case _ => sender() ! Revealed(stockPhone) }
       })
 
       val storeService = new StoreService(storeActorRef)
 
-      val result = storeService.find("ae4cd")
+      val result = storeService.retrieve("ae4cd")
 
       result.futureValue mustEqual Right(FindSuccess(stockPhone))
     }
@@ -53,7 +53,7 @@ class StoreServiceSpec extends TestKit(ActorSystem("store-system"))
 
       val storeService = new StoreService(storeActorRef)
 
-      val result = storeService.find("ae4cd")
+      val result = storeService.retrieve("ae4cd")
 
       result.futureValue mustEqual Left(MissingItemError)
     }

@@ -27,19 +27,19 @@ class StoreControllerSpec extends PlaySpec with MockitoSugar with TestValues {
   "A StoreController" should {
 
     "return a list of items in the store" in {
-      when(mockStoreService.all) thenReturn Future(Right(RetrieveSuccess(defaultStore)))
+      when(mockStoreService.list) thenReturn Future(Right(RetrieveSuccess(defaultStore)))
 
       val result = controller.list(FakeRequest(GET, "/items"))
       assert(status(result) ==  OK)
     }
     "return a specific item if it's in the store" in {
-      when(mockStoreService.find(any[String])) thenReturn Future(Right(FindSuccess(stockBike)))
-      val result = controller.find("sda12e")(FakeRequest(GET, "/items/sda12e"))
+      when(mockStoreService.retrieve(any[String])) thenReturn Future(Right(FindSuccess(stockBike)))
+      val result = controller.retrieve("sda12e")(FakeRequest(GET, "/items/sda12e"))
       assert(status(result) ==  OK)
     }
     "return error when retrieving a missing item" in {
-      when(mockStoreService.find(any[String])) thenReturn Future(Left(MissingItemError))
-      val result = controller.find("sda12e")(FakeRequest(GET, "/items/sda12e"))
+      when(mockStoreService.retrieve(any[String])) thenReturn Future(Left(MissingItemError))
+      val result = controller.retrieve("sda12e")(FakeRequest(GET, "/items/sda12e"))
       assert(status(result) ==  NOT_FOUND)
     }
   }

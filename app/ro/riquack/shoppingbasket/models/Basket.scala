@@ -4,13 +4,12 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.libs.json.Writes._
 
-//TODO use a mutable data structure like ListMap
 case class Basket(private var items: List[BasketItem]){
 
   def value = items.foldRight(BigDecimal(0))((cur, acc) => cur.item.price * cur.amount + acc)
 
   def add(item: Item, amount: Int): Unit = {
-    find(item.id) match {
+    retrieve(item.id) match {
       case Some(basketItem) =>
         remove(basketItem)
         items = items :+ basketItem.copy(amount = basketItem.amount + amount)
@@ -20,7 +19,7 @@ case class Basket(private var items: List[BasketItem]){
 
   def remove(basketItem: BasketItem): Unit = items = items.filterNot(_.item.id == basketItem.item.id)
 
-  def find(id: String): Option[BasketItem] = items.find(_.item.id == id)
+  def retrieve(id: String): Option[BasketItem] = items.find(_.item.id == id)
 }
 
 

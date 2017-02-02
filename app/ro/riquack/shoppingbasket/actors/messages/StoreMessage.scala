@@ -15,25 +15,25 @@ trait StoreOutboundMessage
 
 object StoreMessage {
 
-  case object RetrieveAllProducts extends StoreInboundMessage
+  case object ListItems extends StoreInboundMessage
 
-  case class RetrieveProduct(id: String) extends StoreInboundMessage
+  case class RetrieveItem(id: String) extends StoreInboundMessage
 
-  case class IncrementProductStock(basketItem: BasketItem) extends StoreInboundMessage
+  case class IncrementStock(basketItem: BasketItem) extends StoreInboundMessage
 
-  case class DecrementProductStock(itemDTO: ItemDTO) extends StoreInboundMessage
+  case class DecrementStock(itemDTO: ItemDTO) extends StoreInboundMessage
 
 
 
-  case class Show(storeItem: StoreItem) extends StoreOutboundMessage
+  case class Revealed(storeItem: StoreItem) extends StoreOutboundMessage
 
-  case class ShowContent(store: Store) extends StoreOutboundMessage
+  case class RevealedContent(store: Store) extends StoreOutboundMessage
+
+  case object AddedStock extends StoreOutboundMessage
 
   case object ItemNotFound extends StoreOutboundMessage
 
-  case object ItemNoStock extends StoreOutboundMessage
-
-  case object AddedStock extends StoreOutboundMessage
+  case object ItemInsufficientStock extends StoreOutboundMessage
 
 }
 

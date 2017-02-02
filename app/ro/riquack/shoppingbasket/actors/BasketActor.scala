@@ -13,8 +13,8 @@ class BasketActor() extends Actor with ActorLogging {
 
   override def receive: Receive = {
 
-    case RetrieveProducts =>
-      sender() ! ShowContent(basket)
+    case ListProducts =>
+      sender() ! RevealedContent(basket)
       log.info("Retrieved items in the basket...")
 
     case AddProduct(item, amount) =>
@@ -22,10 +22,10 @@ class BasketActor() extends Actor with ActorLogging {
       log.info(s"Added $amount x ${item.id} to basket...")
 
     case RemoveProduct(id) =>
-      basket.find(id) match {
+      basket.retrieve(id) match {
         case Some(basketItem) =>
           basket.remove(basketItem)
-          sender() ! Show(basketItem)
+          sender() ! Revealed(basketItem)
           log.info(s"Removed $id from basket...")
         case None =>
           sender() ! ItemNotFound
