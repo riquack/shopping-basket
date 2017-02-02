@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/riquack/shopping-basket.svg?branch=master)](https://travis-ci.org/riquack/shopping-basket)
+
 #Shopping Basket API
 
 A small REST API for a online shopping basket build using [Play Framework](https://www.playframework.com/) and [Akka](http://akka.io/) in [Scala](https://www.scala-lang.org/)
