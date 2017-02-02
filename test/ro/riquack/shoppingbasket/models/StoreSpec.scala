@@ -9,7 +9,7 @@ class StoreSpec extends FlatSpec with TestValues with OptionValues {
   private val store = defaultStore
 
   "A store" should "find a existing item" in {
-    assert(store.find("ae4cd").value == phone)
+    assert(store.find("ae4cd").value == stockPhone)
   }
 
   it should "not find a missing item" in {

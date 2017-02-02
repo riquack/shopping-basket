@@ -6,8 +6,11 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{MustMatchers, WordSpecLike}
 import org.scalatest.mockito.MockitoSugar
 import ro.riquack.shoppingbasket.TestValues
+import ro.riquack.shoppingbasket.actors.messages.StoreMessage._
 import ro.riquack.shoppingbasket.models.Store
 import ro.riquack.shoppingbasket.services.StoreService
+import ro.riquack.shoppingbasket.services.responses.StoreServiceError.MissingItemError
+import ro.riquack.shoppingbasket.services.responses.StoreServiceResponse.{FindSuccess, RetrieveSuccess}
 
 
 class StoreServiceSpec extends TestKit(ActorSystem("store-system"))
@@ -21,38 +24,38 @@ class StoreServiceSpec extends TestKit(ActorSystem("store-system"))
   "A StoreService" must {
     "return all items in the store" in {
       val storeActorRef = TestActorRef(new Actor {
-        override def receive: Receive = { case _ => sender() ! defaultStore }
+        override def receive: Receive = { case _ => sender() ! ShowContent(defaultStore) }
       })
 
       val storeService = new StoreService(storeActorRef)
 
       val result = storeService.all
 
-      result.futureValue mustEqual Store(List(phone, notebook, bike))
+      result.futureValue mustEqual Right(RetrieveSuccess(Store(List(stockPhone, stockNotebook, stockBike))))
     }
 
     "return a requested item in the store" in {
       val storeActorRef = TestActorRef(new Actor {
-        override def receive: Receive = { case _ => sender() ! Some(phone) }
+        override def receive: Receive = { case _ => sender() ! Show(stockPhone) }
       })
 
       val storeService = new StoreService(storeActorRef)
 
       val result = storeService.find("ae4cd")
 
-      result.futureValue mustEqual Some(phone)
+      result.futureValue mustEqual Right(FindSuccess(stockPhone))
     }
 
     "not return an item that is not the store" in {
       val storeActorRef = TestActorRef(new Actor {
-        override def receive: Receive = { case _ => sender() ! None }
+        override def receive: Receive = { case _ => sender() ! ItemNotFound }
       })
 
       val storeService = new StoreService(storeActorRef)
 
       val result = storeService.find("ae4cd")
 
-      result.futureValue mustEqual None
+      result.futureValue mustEqual Left(MissingItemError)
     }
   }
 

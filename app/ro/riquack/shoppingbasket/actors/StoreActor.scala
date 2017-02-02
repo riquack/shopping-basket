@@ -2,7 +2,7 @@ package ro.riquack.shoppingbasket.actors
 
 import akka.actor.{Actor, ActorLogging}
 import akka.event.Logging
-import ro.riquack.shoppingbasket.messages.StoreMessage._
+import ro.riquack.shoppingbasket.actors.messages.StoreMessage._
 import ro.riquack.shoppingbasket.models.{BasketItem, Item, Store}
 import ro.riquack.shoppingbasket.repositories.StoreRepository
 
@@ -14,28 +14,37 @@ class StoreActor(storeRepository: StoreRepository) extends Actor with ActorLoggi
 
   override def receive: Receive = {
     case RetrieveAllProducts =>
-      sender() ! store
-      log.info("Listed all items in the store...")
+      sender() ! ShowContent(store)
+      log.info("Listed all items in the store")
 
     case RetrieveProduct(id) =>
-      sender() ! store.find(id)
-      log.info(s"Retrieved item $id...")
+      store.find(id) match {
+        case Some(storeItem) =>
+          sender() ! Show(storeItem)
+          log.info(s"Retrieved item $id")
+        case None =>
+          sender() ! ItemNotFound
+          log.error(s"Could not find $id")
+      }
 
-    case DecrementProductStock(item) =>
+    case DecrementProductStock(reqItem) =>
 
-      val stockStatus = store.find(item.id) match {
-        case Some(prd) => {
-          if (prd.stock >= item.amount) {
-            store.removeStock(item)
-            ItemInStock(prd)
+      val outboundMessage = store.find(reqItem.id) match {
+        case Some(storeItem) => {
+          if (storeItem.stock >= reqItem.amount) {
+            store.removeStock(reqItem)
+            log.info(s"Took ${reqItem.amount} x ${reqItem.id} from stock")
+            Show(storeItem)
           } else {
+            log.info(s"Could not find ${reqItem.amount} x ${reqItem.id} in stock")
             ItemNoStock
           }
         }
-        case None => ItemNotFound
+        case None =>
+          log.error(s"Could not find ${reqItem.id}")
+          ItemNotFound
       }
-      sender() ! stockStatus
-      log.info(s"Took ${item.amount} x ${item.id} from stock...")
+      sender() ! outboundMessage
 
     case IncrementProductStock(basketItem) =>
       store.addStock(basketItem)

@@ -13,11 +13,11 @@ class ReadsWritesSpec extends FlatSpec with MustMatchers with TestValues {
     val basketJson = Json.toJson(basket)
     val itemJson = (basketJson \ "items")(0)
 
-    (itemJson \ "item" \ "id").as[String] mustEqual "ae4cd"
-    (itemJson \ "item" \ "name").as[String] mustEqual "iPhone 7 by Apple"
-    (itemJson \ "item" \ "price").as[BigDecimal] mustEqual BigDecimal(700)
-    (itemJson \ "amount" ).as[Int] mustEqual 1
-    (basketJson \ "value").as[BigDecimal] mustEqual BigDecimal(700)
+    (itemJson \ "id").as[String] mustEqual "ae4cd"
+    (itemJson \ "name").as[String] mustEqual "iPhone 7 by Apple"
+    (itemJson \ "price").as[BigDecimal] mustEqual BigDecimal(700)
+    (itemJson \ "amount" ).as[Int] mustEqual 2
+    (basketJson \ "value").as[BigDecimal] mustEqual BigDecimal(1400)
   }
 
   "A Store" should "have the following JSON representation" in {
@@ -35,10 +35,10 @@ class ReadsWritesSpec extends FlatSpec with MustMatchers with TestValues {
     (itemJson \ "inStock").as[Boolean] mustEqual true
   }
 
-  "An Item" should "have the following JSON representation" in {
-    import ro.riquack.shoppingbasket.models.Item.writes
+  "An StoreItem" should "have the following JSON representation" in {
+    import ro.riquack.shoppingbasket.models.StoreItem.writes
 
-    val itemJson = Json.toJson(phone)
+    val itemJson = Json.toJson(stockPhone)
     val reviewJson = (itemJson \ "reviews")(0)
 
     (itemJson \ "id").as[String] mustEqual "ae4cd"

@@ -4,6 +4,7 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.libs.json.Writes._
 
+//TODO use a mutable data structure like ListMap
 case class Basket(private var items: List[BasketItem]){
 
   def value = items.foldRight(BigDecimal(0))((cur, acc) => cur.item.price * cur.amount + acc)

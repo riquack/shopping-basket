@@ -7,14 +7,14 @@ import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play._
 import org.mockito.Mockito._
 import org.mockito.Matchers._
-import play.api.libs.json.{JsString, JsValue, Json}
-import play.api.mvc.Result
 import play.api.test.Helpers._
-import play.api.test.{FakeHeaders, FakeRequest}
+import play.api.test.FakeRequest
 import ro.riquack.shoppingbasket.TestValues
 import ro.riquack.shoppingbasket.api.controllers.BasketController
 import ro.riquack.shoppingbasket.api.dto.ItemDTO
 import ro.riquack.shoppingbasket.services._
+import ro.riquack.shoppingbasket.services.responses.BasketServiceError.{InsufficientStockError, MissingItemError}
+import ro.riquack.shoppingbasket.services.responses.BasketServiceResponse.{RetrieveSuccess, Success}
 
 import scala.concurrent.Future
 
@@ -30,14 +30,14 @@ class BasketControllerSpec extends PlaySpec with MockitoSugar with OneAppPerSuit
   "A BasketController" should {
 
     "retrieve the list of items in the basket" in {
-      when(mockBasketService.list) thenReturn Future(defaultBasket)
+      when(mockBasketService.list) thenReturn Future(Right(RetrieveSuccess(defaultBasket)))
 
       val result = controller.list(FakeRequest(GET, "/basket/items"))
       assert(status(result) == OK)
     }
 
     "successfully add an existing item if the stock is sufficient" in {
-      when(mockBasketService.add(any[ItemDTO])) thenReturn Future(Right(DefaultServiceResponse))
+      when(mockBasketService.add(any[ItemDTO])) thenReturn Future(Right(Success))
 
       val req = FakeRequest(POST, "/basket/items")
         .withBody("""{"id":"as31fs","amount":3}""")
@@ -71,14 +71,14 @@ class BasketControllerSpec extends PlaySpec with MockitoSugar with OneAppPerSuit
     }
 
     "remove an existing item from the basket" in {
-      when(mockBasketService.remove(any[String])) thenReturn Future(Right(DefaultServiceResponse))
+      when(mockBasketService.remove(any[String])) thenReturn Future(Right(Success))
 
       val result = controller.remove("asd3as")(FakeRequest("DELETE", "/basket/items/asd3as"))
       assert(status(result) == OK)
     }
 
     "inform the user that there is no such item in the basket" in {
-      when(mockBasketService.remove(any[String])) thenReturn Future(Left(DefaultServiceError))
+      when(mockBasketService.remove(any[String])) thenReturn Future(Left(MissingItemError))
 
       val result = controller.remove("asd3as")(FakeRequest("DELETE", "/basket/items/asd3as"))
       assert(status(result) == NOT_FOUND)

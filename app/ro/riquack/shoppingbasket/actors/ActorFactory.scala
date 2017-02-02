@@ -12,7 +12,7 @@ import ro.riquack.shoppingbasket.repositories.StoreRepository
 class ActorFactory @Inject()(actorSystem: ActorSystem) {
 
   val storeActor: ActorRef =
-    actorSystem.actorOf(Props(classOf[StoreActor], new StoreRepository), s"store-${UUID.randomUUID()}")
+    actorSystem.actorOf(Props(classOf[StoreActor], new StoreRepository), s"store")
 
   val basketActor: ActorRef =
     actorSystem.actorOf(Props(classOf[BasketActor]), s"basket-${UUID.randomUUID()}")

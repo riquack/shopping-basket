@@ -7,3 +7,5 @@ GET         /basket/items                               ro.riquack.shoppingbaske
 POST        /basket/items                               ro.riquack.shoppingbasket.api.controllers.BasketController.add
 DELETE      /basket/items/:id                           ro.riquack.shoppingbasket.api.controllers.BasketController.remove(id: String)
 
+# PATCH       /basket/items/:id                          TODO
+

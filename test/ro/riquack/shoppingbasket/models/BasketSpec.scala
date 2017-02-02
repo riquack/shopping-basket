@@ -9,18 +9,14 @@ import ro.riquack.shoppingbasket.TestValues
 @RunWith(classOf[JUnitRunner])
 class BasketSpec extends FlatSpec with TestValues with OptionValues {
 
-  val phoneBasket = BasketItem(phone, 2)
-  val notebookBasket = BasketItem(notebook, 1)
-  val basketItem = BasketItem(bike, 1)
-
-  val basket = Basket(List(phoneBasket, notebookBasket))
+  val basket = Basket(List(basketPhone, basketNotebook))
 
   "A basket" should "calculate the value of the items it contains" in {
     assert(basket.value == BigDecimal(3500))
   }
 
   it should "find an exiting item" in {
-    assert(basket.find("ae4cd").value == phoneBasket)
+    assert(basket.find("ae4cd").value == basketPhone)
   }
 
   it should "not find a missing item" in {
@@ -29,7 +25,7 @@ class BasketSpec extends FlatSpec with TestValues with OptionValues {
 
   it should "contain a newly added item" in {
     basket.add(bike, 1)
-    assert(basket.find("bla32").value == basketItem)
+    assert(basket.find("bla32").value == basketBike)
   }
 
   it should "update the amount for an existing item" in {
@@ -38,7 +34,7 @@ class BasketSpec extends FlatSpec with TestValues with OptionValues {
   }
 
   it should "not contain a previously removed item" in {
-    basket.remove(notebookBasket)
+    basket.remove(basketNotebook)
     assert(basket.find("ae4cd").isDefined)
     assert(basket.find("zf33s").isEmpty)
   }
