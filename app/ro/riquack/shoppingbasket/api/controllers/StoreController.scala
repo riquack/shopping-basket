@@ -4,17 +4,17 @@ import javax.inject._
 
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
-import ro.riquack.shoppingbasket.api.dto.ErrorDTO
 import ro.riquack.shoppingbasket.services.StoreService
-import ro.riquack.shoppingbasket.services.responses.StoreServiceError.{MissingItemError, UnexpectedMessageError}
-import ro.riquack.shoppingbasket.services.responses.StoreServiceResponse.{FindSuccess, RetrieveSuccess}
+import ro.riquack.shoppingbasket.services.responses.StoreServiceError._
+import ro.riquack.shoppingbasket.services.responses.StoreServiceResponse._
 
 import scala.concurrent.ExecutionContext
 
 class StoreController @Inject () (storeService: StoreService)(implicit ec: ExecutionContext) extends Controller {
 
   def list = Action.async {
-    import ro.riquack.shoppingbasket.models.Store.writes
+    import ro.riquack.shoppingbasket.models.StoreItem.lightWrites
+
     storeService.list.map {
       case Right(RetrieveSuccess(items)) => Ok(Json.toJson(items))
       case Left(UnexpectedMessageError) => ControllerMessages.internalServerError

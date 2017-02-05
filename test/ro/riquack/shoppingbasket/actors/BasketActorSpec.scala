@@ -8,11 +8,9 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{MustMatchers, WordSpecLike}
 import ro.riquack.shoppingbasket.TestValues
 import ro.riquack.shoppingbasket.actors.messages.BasketMessage._
-import ro.riquack.shoppingbasket.actors.messages.BasketOutboundMessage
-import ro.riquack.shoppingbasket.models.{Basket, BasketItem}
+import ro.riquack.shoppingbasket.models.Basket
 
 import scala.concurrent.duration._
-import scala.util.Success
 
 class BasketActorSpec extends TestKit(ActorSystem("test-store"))
   with WordSpecLike

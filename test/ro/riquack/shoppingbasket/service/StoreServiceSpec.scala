@@ -7,10 +7,11 @@ import org.scalatest.{MustMatchers, WordSpecLike}
 import org.scalatest.mockito.MockitoSugar
 import ro.riquack.shoppingbasket.TestValues
 import ro.riquack.shoppingbasket.actors.messages.StoreMessage._
-import ro.riquack.shoppingbasket.models.Store
 import ro.riquack.shoppingbasket.services.StoreService
 import ro.riquack.shoppingbasket.services.responses.StoreServiceError.MissingItemError
 import ro.riquack.shoppingbasket.services.responses.StoreServiceResponse.{FindSuccess, RetrieveSuccess}
+
+import scala.collection.mutable
 
 
 class StoreServiceSpec extends TestKit(ActorSystem("store-system"))
@@ -24,26 +25,27 @@ class StoreServiceSpec extends TestKit(ActorSystem("store-system"))
   "A StoreService" must {
     "return all items in the store" in {
       val storeActorRef = TestActorRef(new Actor {
-        override def receive: Receive = { case _ => sender() ! RevealedContent(defaultStore) }
+        override def receive: Receive = { case _ => sender() ! RevealedContent(defaultStoreItems) }
       })
 
       val storeService = new StoreService(storeActorRef)
 
       val result = storeService.list
+      val expectedResult = List(storePhone, storeNotebook, storeBike)
 
-      result.futureValue mustEqual Right(RetrieveSuccess(Store(List(stockPhone, stockNotebook, stockBike))))
+      result.futureValue mustEqual Right(RetrieveSuccess(expectedResult))
     }
 
     "return a requested item in the store" in {
       val storeActorRef = TestActorRef(new Actor {
-        override def receive: Receive = { case _ => sender() ! Revealed(stockPhone) }
+        override def receive: Receive = { case _ => sender() ! Revealed(storePhone) }
       })
 
       val storeService = new StoreService(storeActorRef)
 
       val result = storeService.retrieve("ae4cd")
 
-      result.futureValue mustEqual Right(FindSuccess(stockPhone))
+      result.futureValue mustEqual Right(FindSuccess(storePhone))
     }
 
     "not return an item that is not the store" in {

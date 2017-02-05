@@ -41,7 +41,7 @@ class BasketServiceSpec extends TestKit(ActorSystem("store-system"))
         override def receive: Receive = { case _ => sender() ! defaultBasket }
       })
       val storeActorRef = TestActorRef(new Actor {
-        override def receive: Receive = { case _ => sender() ! StoreMessage.Revealed(stockPhone) }
+        override def receive: Receive = { case _ => sender() ! StoreMessage.Revealed(storePhone) }
       })
       val basketService = new BasketService(basketActorRef, storeActorRef)
       val result = basketService.add(ItemDTO("ae4cd", 1))

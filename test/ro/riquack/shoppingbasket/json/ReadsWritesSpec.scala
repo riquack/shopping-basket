@@ -20,12 +20,11 @@ class ReadsWritesSpec extends FlatSpec with MustMatchers with TestValues {
     (basketJson \ "value").as[BigDecimal] mustEqual BigDecimal(1400)
   }
 
-  "A Store" should "have the following JSON representation" in {
-    import ro.riquack.shoppingbasket.models.Store.writes
-    val store = defaultStore
+  "A StoreItem" should "have the following JSON representation in collection" in {
+    import ro.riquack.shoppingbasket.models.StoreItem.lightWrites
 
-    val storeJson = Json.toJson(store)
-    val itemJson = (storeJson \ "items")(0)
+    val storeJson = Json.toJson(defaultStoreItems)
+    val itemJson = storeJson(0)
 
     (itemJson \ "id").as[String] mustEqual "ae4cd"
     (itemJson \ "name").as[String] mustEqual "iPhone 7 by Apple"
@@ -38,7 +37,7 @@ class ReadsWritesSpec extends FlatSpec with MustMatchers with TestValues {
   "An StoreItem" should "have the following JSON representation" in {
     import ro.riquack.shoppingbasket.models.StoreItem.writes
 
-    val itemJson = Json.toJson(stockPhone)
+    val itemJson = Json.toJson(storePhone)
     val reviewJson = (itemJson \ "reviews")(0)
 
     (itemJson \ "id").as[String] mustEqual "ae4cd"

@@ -1,5 +1,6 @@
 package ro.riquack.shoppingbasket.actors.messages
 
+import ro.riquack.shoppingbasket.api.dto.ItemDTO
 import ro.riquack.shoppingbasket.models.{Basket, BasketItem, Item}
 
 /**

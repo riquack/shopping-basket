@@ -3,22 +3,20 @@ package ro.riquack.shoppingbasket.actors
 import akka.actor.{Actor, ActorLogging}
 import akka.event.Logging
 import ro.riquack.shoppingbasket.actors.messages.StoreMessage._
-import ro.riquack.shoppingbasket.models.{BasketItem, Item, Store}
+import ro.riquack.shoppingbasket.models.{BasketItem, Item}
 import ro.riquack.shoppingbasket.repositories.StoreRepository
 
 class StoreActor(storeRepository: StoreRepository) extends Actor with ActorLogging {
-
-  private val store: Store = Store(storeRepository.all)
 
   override def preStart(): Unit = log.info("Starting...")
 
   override def receive: Receive = {
     case ListItems =>
-      sender() ! RevealedContent(store)
+      sender() ! RevealedContent(storeRepository.list())
       log.info("Listed all items in the store")
 
     case RetrieveItem(id) =>
-      store.retrieve(id) match {
+      storeRepository.retrieve(id) match {
         case Some(storeItem) =>
           sender() ! Revealed(storeItem)
           log.info(s"Retrieved item $id")
@@ -29,10 +27,10 @@ class StoreActor(storeRepository: StoreRepository) extends Actor with ActorLoggi
 
     case DecrementStock(reqItem) =>
 
-      val outboundMessage = store.retrieve(reqItem.id) match {
+      val outboundMessage = storeRepository.retrieve(reqItem.id) match {
         case Some(storeItem) => {
           if (storeItem.stock >= reqItem.amount) {
-            store.removeStock(reqItem)
+            storeRepository.decreaseStock(reqItem)
             log.info(s"Took ${reqItem.amount} x ${reqItem.id} from stock")
             Revealed(storeItem)
           } else {
@@ -47,7 +45,7 @@ class StoreActor(storeRepository: StoreRepository) extends Actor with ActorLoggi
       sender() ! outboundMessage
 
     case IncrementStock(basketItem) =>
-      store.addStock(basketItem)
+      storeRepository.incrementStock(basketItem)
       log.info(s"Added ${basketItem.amount} x ${basketItem.item.id} in stock...")
 
   }

@@ -6,8 +6,8 @@ import play.api.libs.json.{JsError, Json}
 import play.api.mvc.{Action, Controller}
 import ro.riquack.shoppingbasket.api.dto.ItemDTO
 import ro.riquack.shoppingbasket.services.BasketService
-import ro.riquack.shoppingbasket.services.responses.BasketServiceResponse.{RetrieveSuccess, Success}
-import ro.riquack.shoppingbasket.services.responses.BasketServiceError.{InsufficientStockError, MissingItemError, UnexpectedMessageError}
+import ro.riquack.shoppingbasket.services.responses.BasketServiceResponse._
+import ro.riquack.shoppingbasket.services.responses.BasketServiceError._
 
 import scala.concurrent.{ExecutionContext, Future}
 

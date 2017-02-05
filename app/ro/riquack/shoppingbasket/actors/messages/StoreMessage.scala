@@ -1,7 +1,7 @@
 package ro.riquack.shoppingbasket.actors.messages
 
 import ro.riquack.shoppingbasket.api.dto.ItemDTO
-import ro.riquack.shoppingbasket.models.{BasketItem, Item, Store, StoreItem}
+import ro.riquack.shoppingbasket.models.{BasketItem, Item, StoreItem}
 
 /**
   * Type of messages that [[ro.riquack.shoppingbasket.actors.StoreActor]] receives
@@ -27,7 +27,7 @@ object StoreMessage {
 
   case class Revealed(storeItem: StoreItem) extends StoreOutboundMessage
 
-  case class RevealedContent(store: Store) extends StoreOutboundMessage
+  case class RevealedContent(storeContent: List[StoreItem]) extends StoreOutboundMessage
 
   case object AddedStock extends StoreOutboundMessage
 
