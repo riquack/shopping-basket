@@ -4,9 +4,6 @@ import org.scalatest.{FlatSpec, MustMatchers, OptionValues}
 import ro.riquack.shoppingbasket.TestValues
 import ro.riquack.shoppingbasket.models.BasketItem
 
-/**
-  * Created by p3700409 on 05/02/2017.
-  */
 class StoreRepositorySpec extends FlatSpec with OptionValues with TestValues with MustMatchers {
 
   val store = new StoreRepository
