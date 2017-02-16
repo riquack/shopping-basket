@@ -26,5 +26,6 @@ trait TestValues {
   def defaultStoreItems = List(storePhone, storeNotebook, storeBike)
 
   def defaultBasket = Basket(List(basketPhone))
+  def emptyBasket = Basket(List.empty[BasketItem])
 
 }
