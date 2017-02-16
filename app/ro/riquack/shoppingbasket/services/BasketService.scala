@@ -12,24 +12,29 @@ import ro.riquack.shoppingbasket.actors.messages.BasketMessage._
 import ro.riquack.shoppingbasket.actors.messages.StoreMessage
 import ro.riquack.shoppingbasket.actors.messages.StoreMessage.{DecrementStock, IncrementStock}
 import ro.riquack.shoppingbasket.services.responses.BasketServiceError.{InsufficientStockError, MissingItemError, UnexpectedMessageError}
-import ro.riquack.shoppingbasket.services.responses.BasketServiceResponse.{RetrieveSuccess, Success}
+import ro.riquack.shoppingbasket.services.responses.BasketServiceResponse.{CreateSuccess, RetrieveSuccess, Success}
 import ro.riquack.shoppingbasket.services.responses.{BasketServiceError, BasketServiceResponse}
 
 class BasketService @Inject() (
     @Named("basketActor") basketActor: ActorRef,
     @Named("storeActor") storeActor: ActorRef)(implicit ec: ExecutionContext) {
 
+  def create: Future[Either[BasketServiceError, BasketServiceResponse]] =
+    (basketActor ? CreateBasket).map {
+      case CreatedBasket(id) => Right(CreateSuccess(id))
+      case _ => Left(UnexpectedMessageError)
+    }
 
-  def list: Future[Either[BasketServiceError, BasketServiceResponse]] =
-    (basketActor ? ListProducts).map {
+  def list(basketId: String): Future[Either[BasketServiceError, BasketServiceResponse]] =
+    (basketActor ? ListProducts(basketId)).map {
       case RevealedContent(basket) => Right(RetrieveSuccess(basket))
       case _ => Left(UnexpectedMessageError)
     }
 
-  def add(item: ItemDTO): Future[Either[BasketServiceError, BasketServiceResponse]] = {
+  def add(basketId: String, item: ItemDTO): Future[Either[BasketServiceError, BasketServiceResponse]] = {
     (storeActor ? DecrementStock(item)).map {
         case StoreMessage.Revealed(storeItem) =>
-          basketActor ! AddProduct(storeItem.item, item.amount)
+          basketActor ! AddProduct(basketId, storeItem.item, item.amount)
             Right(Success)
         case StoreMessage.ItemNotFound => Left(MissingItemError)
         case StoreMessage.ItemInsufficientStock =>  Left(InsufficientStockError)
@@ -37,8 +42,8 @@ class BasketService @Inject() (
       }
   }
 
-  def remove(id: String): Future[Either[BasketServiceError, BasketServiceResponse]] = {
-    (basketActor ? RemoveProduct(id)).map {
+  def remove(basketId: String, itemId: String): Future[Either[BasketServiceError, BasketServiceResponse]] = {
+    (basketActor ? RemoveProduct(basketId, itemId)).map {
       case Revealed(basketItem) => {
         storeActor ! IncrementStock(basketItem)
         Right(Success)

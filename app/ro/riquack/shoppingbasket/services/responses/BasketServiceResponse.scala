@@ -7,6 +7,7 @@ trait BasketServiceResponse
 object BasketServiceResponse {
   case object Success extends BasketServiceResponse
   case class RetrieveSuccess(basket: Basket) extends BasketServiceResponse
+  case class CreateSuccess(basketId: String) extends BasketServiceResponse
 }
 
 

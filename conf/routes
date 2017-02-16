@@ -1,8 +1,10 @@
 # Shopping Basket API endpoints
 
 GET         /items                                      ro.riquack.shoppingbasket.api.controllers.StoreController.list
-GET         /items/:id                                  ro.riquack.shoppingbasket.api.controllers.StoreController.retrieve(id: String)
+GET         /items/:item                                ro.riquack.shoppingbasket.api.controllers.StoreController.retrieve(item: String)
 
-GET         /basket/items                               ro.riquack.shoppingbasket.api.controllers.BasketController.list
-POST        /basket/items                               ro.riquack.shoppingbasket.api.controllers.BasketController.add
-DELETE      /basket/items/:id                           ro.riquack.shoppingbasket.api.controllers.BasketController.remove(id: String)
+GET         /basket/:basket                             ro.riquack.shoppingbasket.api.controllers.BasketController.list(basket: String)
+POST        /basket/:basket                             ro.riquack.shoppingbasket.api.controllers.BasketController.add(basket: String)
+DELETE      /basket/:basket/items/:item                 ro.riquack.shoppingbasket.api.controllers.BasketController.remove(basket: String, item: String)
+
+POST        /basket                                     ro.riquack.shoppingbasket.api.controllers.BasketController.create
