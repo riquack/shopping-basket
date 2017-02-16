@@ -7,7 +7,7 @@ import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.util.Timeout
 
 import scala.concurrent.duration._
-import ro.riquack.shoppingbasket.repositories.StoreRepository
+import ro.riquack.shoppingbasket.repositories.{BasketRepository, StoreRepository}
 
 class ActorFactory @Inject()(actorSystem: ActorSystem) {
 
@@ -15,7 +15,7 @@ class ActorFactory @Inject()(actorSystem: ActorSystem) {
     actorSystem.actorOf(Props(classOf[StoreActor], new StoreRepository), s"store")
 
   val basketActor: ActorRef =
-    actorSystem.actorOf(Props(classOf[BasketActor]), s"basket-${UUID.randomUUID()}")
+    actorSystem.actorOf(Props(classOf[BasketActor], new BasketRepository),s"basket-${UUID.randomUUID()}")
 
 }
 

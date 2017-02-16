@@ -14,21 +14,28 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BasketController @Inject() (basketService: BasketService)(implicit ec: ExecutionContext) extends Controller {
 
-  def list = Action.async { implicit request =>
-    basketService.list.map {
+  def create = Action.async { implicit request =>
+    basketService.create.map {
+      case Right(CreateSuccess(basketId)) => Created.withHeaders(LOCATION -> routes.BasketController.list(basketId).url)
+      case Left(UnexpectedMessageError) => ControllerMessages.internalServerError
+    }
+  }
+
+  def list(basketId: String) = Action.async { implicit request =>
+    basketService.list(basketId).map {
       case Right(RetrieveSuccess(basket)) => Ok(Json.toJson(basket))
       case Left(UnexpectedMessageError) => ControllerMessages.internalServerError
     }
 
   }
 
-  def add = Action.async(parse.json) { implicit request =>
+  def add(basketId: String) = Action.async(parse.json) { implicit request =>
     request.body.validate[ItemDTO].fold(
       errors =>
         Future.successful(BadRequest(JsError.toJson(errors))),
       item =>
-        basketService.add(item).map {
-          case Right(Success) => Created.withHeaders(LOCATION -> routes.BasketController.list().url)
+        basketService.add(basketId, item).map {
+          case Right(Success) => Created.withHeaders(LOCATION -> routes.BasketController.list(basketId).url)
           case Left(MissingItemError) => ControllerMessages.notFound
           case Left(InsufficientStockError) => ControllerMessages.insufficientStock
           case Left(UnexpectedMessageError) => ControllerMessages.internalServerError
@@ -36,8 +43,8 @@ class BasketController @Inject() (basketService: BasketService)(implicit ec: Exe
     )
   }
 
-  def remove(id: String) = Action.async { implicit request =>
-    basketService.remove(id).map {
+  def remove(basketId: String, itemId: String) = Action.async { implicit request =>
+    basketService.remove(basketId, itemId).map {
       case Right(Success) => Ok
       case Left(MissingItemError) => ControllerMessages.notFound
       case Left(UnexpectedMessageError) => ControllerMessages.internalServerError
