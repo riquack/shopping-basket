@@ -25,6 +25,7 @@ class BasketActor(basketRepository: BasketRepository) extends Actor with ActorLo
       basketRepository.retrieve(basketId) match {
         case Some(_) =>
           basketRepository.addTo(basketId, item, amount)
+          sender() ! ItemAdded
           log.info(s"Added $amount x ${item.id} to basket")
         case None =>
           sender() ! BasketNotFound
@@ -52,14 +53,6 @@ class BasketActor(basketRepository: BasketRepository) extends Actor with ActorLo
       sender() ! CreatedBasket(basketId)
       log.info(s"Created basket $basketId")
 
-    case RemoveBasket(basketId: String) =>
-      basketRepository.remove(basketId) match {
-        case Some(_) =>
-          log.info(s"Removed basket $basketId")
-        case None =>
-          sender() ! BasketNotFound
-          log.info("No such basket")
-      }
   }
 
 }

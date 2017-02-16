@@ -27,7 +27,7 @@ class StoreController @Inject () (storeService: StoreService)(implicit ec: Execu
 
     storeService.retrieve(id).map {
       case Right(FindSuccess(item)) => Ok(Json.toJson(item))
-      case Left(MissingItemError) => ControllerMessages.notFound
+      case Left(MissingItemError) => ControllerMessages.itemNotFound
       case Left(UnexpectedMessageError) => ControllerMessages.internalServerError
     }
   }
